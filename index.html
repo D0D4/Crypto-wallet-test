@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Wallet</title>
+    <style>
+        /* Add your CSS styles here */
+    </style>
+</head>
+<body>
+    <h1>Crypto Wallet</h1>
+    <div id="wallet-info">
+        <p>Your Address: <span id="wallet-address">Loading...</span></p>
+        <p>Balance: <span id="wallet-balance">Loading...</span> ETH</p>
+    </div>
+    <div id="send-transaction">
+        <h2>Send Transaction</h2>
+        <label for="recipient-address">Recipient Address:</label>
+        <input type="text" id="recipient-address">
+        <label for="amount">Amount (ETH):</label>
+        <input type="number" id="amount" step="0.01">
+        <button onclick="sendTransaction()">Send</button>
+    </div>
+
+    <script>
+        async function fetchWalletInfo() {
+            // Make an API request to your backend to fetch wallet info
+            // Replace the URL with your actual backend endpoint
+            const response = await fetch('/api/wallet');
+            const data = await response.json();
+
+            document.getElementById('wallet-address').innerText = data.address;
+            document.getElementById('wallet-balance').innerText = data.balance;
+        }
+
+        async function sendTransaction() {
+            const recipientAddress = document.getElementById('recipient-address').value;
+            const amount = document.getElementById('amount').value;
+
+            // Make an API request to your backend to send a transaction
+            // Replace the URL with your actual backend endpoint
+            const response = await fetch('/api/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    to: recipientAddress,
+                    value: amount
+                })
+            });
+
+            const result = await response.json();
+            alert(result.message);
+            fetchWalletInfo(); // Update wallet info after sending transaction
+        }
+
+        // Fetch wallet info when the page loads
+        window.onload = fetchWalletInfo;
+    </script>
+</body>
+</html>
